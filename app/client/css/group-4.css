@@ -1,0 +1,70 @@
+:root {
+    --pill-height: 3rem;
+    --expanded-height:20rem;
+    --space-m: 4px;
+}
+
+dialog{
+    width: 90dvw;
+    height: 90dvh;
+    animation-name: stretch_open;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes stretch_open {
+  from {height: 30dvh; width: 30dvw;}
+  to {height: 90dvh; width: 90dvw;}
+}
+
+img{
+    object-fit: contain;
+}
+
+.g4-option{
+    height: var(--pill-height);
+    transition: height 0.3s, border-radius 0.3s;
+    transition-timing-function: ease-in-out;
+    min-height: var(--pill-height);
+    width: calc(var(--pill-height)*8);
+    display: flex;
+    flex-direction: column;
+    background-color: lightgray;
+    border-radius: calc(var(--pill-height)/2);
+    padding: var(--space-m);
+    > div{
+        width: 100%;
+        height: var(--pill-height);
+        min-height: var(--pill-height);
+        display: flex;
+        gap: 0.5rem;
+        button{
+            margin-left: auto;
+            border-radius: 999px;
+        }
+    }
+    >.hidden{
+        display: none;
+    }
+    img{
+        aspect-ratio: 1;
+        height: 100%;
+    }
+}
+
+.g4-option.expanded{
+    height: var(--expanded-height);
+    border-radius: var(--space-m);
+    > div{
+        height: calc(var(--pill-height)*3);
+    }
+    img{
+        height: 100%;
+    }
+    .hidden{
+        display: block;
+    }
+    button{
+        transform: rotate(180deg);
+    }
+}

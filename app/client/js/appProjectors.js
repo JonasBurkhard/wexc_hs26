@@ -3,6 +3,7 @@ import {defaultProjectors}  from "../../../framework/client/js/projector/default
 import {dom}                from "../../../framework/client/js/util/dom.js";
 import {ONE_TO_MANY}        from "../../../framework/client/js/types.js";
 import {AVATAR_URL}             from "./Constants.js";
+import { ARTIST_ARTWORK } from "./appTypes.js";
 
 export { appProjectors }
 
@@ -10,9 +11,9 @@ const connectorProjector = (workbenchController) => {
 
     const SpecialProjector = (workbenchController) => {
         const projectConnection = (rel_meta, entityName, entity) => {
-            // if (rel_meta.relationId !== ARTIST_ARTWORK ) {
+            if (rel_meta.relationId !== ARTIST_ARTWORK ) {
                 return ConnectorProjector(workbenchController).projectConnection(rel_meta, entityName, entity);
-            // }
+            }
             const isOneToMany = rel_meta.cardinality === ONE_TO_MANY;
             const isOneSide = entityName === rel_meta.oneTable;
 
@@ -27,6 +28,7 @@ const connectorProjector = (workbenchController) => {
                 <div>${label}</div>
                 <div>
                     <ul>
+                        <!-- filled later -->
                     </ul>
                     <button type="button" 
                         commandfor="${rel_meta.relationId}_selection_dialog"   
@@ -35,14 +37,18 @@ const connectorProjector = (workbenchController) => {
                     </button>
                     <dialog id="${rel_meta.relationId}_selection_dialog">        
                       <div>            
-                        <select ${ (isOneSide || !isOneToMany) ? "multiple" : ""} size=20>
-                        </select>                    
-                      <button class="submit" type="button" commandfor="${rel_meta.relationId}_selection_dialog" command="close">
-                        Submit
-                       </button>                
-                      <button type="button" commandfor="${rel_meta.relationId}_selection_dialog" command="close">
-                        Cancel
-                       </button>
+                        <select ${ (isOneSide || !isOneToMany) ? "multiple" : ""} size=20 style="display: none">
+                            <!-- filled later -->
+                        </select>
+                        <div class="g4-options" ${ (isOneSide || !isOneToMany) ? "multiple" : ""} size=20>
+                            <!-- filled later -->
+                        </div>                     
+                        <button class="submit" type="button" commandfor="${rel_meta.relationId}_selection_dialog" command="close">
+                            Submit
+                        </button>                
+                        <button type="button" commandfor="${rel_meta.relationId}_selection_dialog" command="close">
+                            Cancel
+                        </button>
                        </div>
                     </dialog>
                 </div>
@@ -50,6 +56,7 @@ const connectorProjector = (workbenchController) => {
 
             const submitButton = divEl.querySelector("button.submit");
             const dialogSelEl  = divEl.querySelector("dialog select");
+            const dialogSelEl2 = divEl.querySelector(".g4-options");
             const ulEl         = divEl.querySelector("ul");
 
             // --- data binding ---
@@ -69,6 +76,22 @@ const connectorProjector = (workbenchController) => {
                             `)
                          .join("");
                     dialogSelEl.innerHTML = optionsHtml;
+                    const optionsHtml2 = manyEntities.map( manyEntity =>
+                        `
+                        <div class="g4-option">
+                            <div>
+                                <img heigth=100 width=100 src="${manyEntity.pictureUrl ?? AVATAR_URL}">
+                                <div data-text="${manyEntity.displayedAs}" value="${manyEntity.id}"></div>
+                                <span class="option-label">${manyEntity.displayedAs}</span>
+                                <button onclick="this.parentElement.parentElement.classList.toggle('expanded')">v</button>
+                            </div>
+                            <div class="hidden">
+                                <p>Material: ${manyEntity.material}</p>
+                            </div>
+                        </div>
+                            `)
+                         .join("");
+                    dialogSelEl2.innerHTML = optionsHtml2;
                 });
 
             // navigate from the closed view to the respective entity
